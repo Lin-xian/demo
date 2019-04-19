@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<style type="text/css">
+			*{
+				margin: 0; padding: 0;
+				}
+			li{
+				list-style: none;
+				}
+			img{
+				vertical-align: center;
+			}
+			#box{
+				width: 850px;
+				height: 500px;
+				margin: 80px auto;
+				position: relative;
+				overflow: hidden;
+			}
+			ul{
+				position: relative;
+				
+			}
+			ul li{
+				position: absolute;
+				left: 850px;
+				transition: all .5s;
+			}
+			ol{
+				position: absolute;
+				bottom: 10px;
+				right: 5px;
+				width: 150px;
+				height: 20px;
+				display: flex;
+				justify-content: space-around;
+				
+			}
+			ol li{
+				width: 20px;
+				height: 20px;
+				text-align: center;
+				background: white;
+				cursor: pointer;
+				z-index: 6;
+			}
+			.prev,
+			.next{
+				width: 50px;
+				height: 50px;
+				line-height: 50px;
+				text-align: center;
+				font-size: 50px;
+				background: rgba(255,255,255 .5);
+				position: relative;
+				top: 50%;
+				cursor: pointer;
+				z-index: 6;
+			}
+			.next{
+				right: -94%;
+				top: 42%;
+			}
+			.showed{
+				left: -850px;
+				z-index: 5;
+			}
+			.show{
+				left: 0;
+				z-index: 5;
+			}
+			.red{
+				background: red;
+				color: white;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="box">
+			<ul>
+				<li class="show"><img src="img/1.jpg"></li>
+				<li><img src="img/2.jpg"></li>
+				<li><img src="img/3.jpg"></li>
+				<li><img src="img/4.jpg"></li>
+				<li><img src="img/5.jpg"></li>
+			</ul>
+			<ol>
+				<li class="red">1</li>
+				<li>2</li>
+				<li>3</li>
+				<li>4</li>
+				<li>5</li>
+			</ol>
+			<p class="prev">&laquo;</p>
+			<p class="next">&laquo;</p>
+		</div>
+		
+		<script type="text/javascript">
+			var Index = 0,
+			    Last = 0,
+			    end = 0,
+			    timer;
+			    
+			function carous(box){
+				this.box = box;
+				this.prev = document.querySelector(".prev");
+				this.next = document.querySelector(".next");
+				this.length = document.querySelectorAll("img").length;
+				this.init();
+			}
+			carous.prototype = {
+				constructor:carous,
+				init:function(){
+					var _this = this;
+					this.Prev();
+					this.Next();
+					this.aBtn();
+/*					setInterval(function(){
+						_this.next.onclick();
+						console.log("ww");
+					},3000);*/
+					
+			    },
+			    
+			    //prev
+			    Prev: function(){
+			    	var that = this;
+			    	this.prev.onclick = function(){
+			    		if (Index == 0){
+			    			Index = that.length -1;
+			    		} else{
+			    			Index--;
+			    		}
+			    		that.change(Last,Index);
+			    		Last = Index;
+			    	}
+			    },
+			    // next
+			    Next: function(){
+			    	var that = this;
+			    	this.next.onclick = function(){
+			    		if (Index == that.length -1) {
+			    			Index = 0;
+			    		} else{
+			    			Index++;
+			    		}
+			    		that.change(Last,Index);
+			    		end = Last;
+			    		
+			    		Last = Index;
+			    		
+			    		console.log(Index,Last,end);
+			    		
+			    	}
+			    },
+			    // change
+			    change: function(last,index){
+			    	var ul = document.querySelector("ul");
+			    	var ol = document.querySelector("ol");
+			    	var oldlast = last;
+			    	ul.children[last].classList.remove("show");
+					ul.children[last].classList.add("showed");
+					ol.children[last].classList.remove("red");
+					
+					ul.children[index].classList.add("show");
+					ol.children[index].classList.add("red");
+					document.querySelector("ul").querySelectorAll("li").forEach(function(uli){
+						if(uli != ul.children[index] && uli != ul.children[last]){
+							console.log(index,last)
+							uli.classList.remove("showed");
+						}
+						if(uli == ul.children[index]){
+							console.log(index,last)
+							uli.classList.remove("showed");
+						}
+					})
+			    },
+			    
+			    // 底部导航
+			    aBtn:function(){
+					var oli = document.querySelector("ol").querySelectorAll("li");
+					var that = this;
+					document.querySelector("ol").onclick = function(e){
+						e = e||window.event;
+						var target = e.target||e.srcElement;
+						console.log(target,oli,target == oli);
+						oli.forEach(function(olis){
+							if (target == olis) {
+								Index = target.innerText-1;
+								that.change(Last,Index);
+								Last = Index;
+								console.log("sadsa");
+							}
+						})
+						
+					}
+				}
+			}
+			new carous(document.querySelector("#box"));
+		</script>
+	</body>
+</html>
